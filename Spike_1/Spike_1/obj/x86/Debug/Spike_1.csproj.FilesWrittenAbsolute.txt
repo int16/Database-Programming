@@ -4,3 +4,14 @@
 /Users/reubenwilson/Dropbox/Swinburne/Student/2014/Semester 2/COS30009 - Database Programming/Assignments/Spike_1/Spike_1/bin/Debug/Spike_1.exe
 /Users/reubenwilson/Dropbox/Swinburne/Student/2014/Semester 2/COS30009 - Database Programming/Assignments/Spike_1/Spike_1/obj/x86/Debug/Spike_1.exe
 /Users/reubenwilson/Dropbox/Swinburne/Student/2014/Semester 2/COS30009 - Database Programming/Assignments/Spike_1/Spike_1/obj/x86/Debug/Spike_1.exe.mdb
+/Users/yanchernikov/Dropbox/Swinburne/2014/Semester 2/Database Programming/Spikes/Spike_1/Spike_1/obj/x86/Debug/.NETFramework,Version=v4.0.AssemblyAttribute.cs
+/Users/yanchernikov/Dropbox/Swinburne/2014/Semester 2/Database Programming/Spikes/Spike_1/Spike_1/bin/Debug/Spike_1.exe.config
+/Users/yanchernikov/Dropbox/Swinburne/2014/Semester 2/Database Programming/Spikes/Spike_1/Spike_1/bin/Debug/Spike_1.exe.mdb
+/Users/yanchernikov/Dropbox/Swinburne/2014/Semester 2/Database Programming/Spikes/Spike_1/Spike_1/bin/Debug/Spike_1.exe
+/Users/yanchernikov/Dropbox/Swinburne/2014/Semester 2/Database Programming/Spikes/Spike_1/Spike_1/obj/x86/Debug/Spike_1.exe
+/Users/yanchernikov/Dropbox/Swinburne/2014/Semester 2/Database Programming/Spikes/Spike_1/Spike_1/obj/x86/Debug/Spike_1.exe.mdb
+/Users/yanchernikov/Dropbox/Swinburne/2014/Semester 2/Database Programming/Spikes/Spike_1/Spike_1/bin/Debug/MySql.Data.dll
+/Users/yanchernikov/Dropbox/Swinburne/2014/Semester 2/Database Programming/Spikes/Spike_1/Spike_1/bin/Debug/EntityFramework.dll
+/Users/yanchernikov/Dropbox/Swinburne/2014/Semester 2/Database Programming/Spikes/Spike_1/Spike_1/bin/Debug/EntityFramework.SqlServer.dll
+/Users/yanchernikov/Dropbox/Swinburne/2014/Semester 2/Database Programming/Spikes/Spike_1/Spike_1/bin/Debug/mysql.data.entity.EF6.dll
+/Users/yanchernikov/Dropbox/Swinburne/2014/Semester 2/Database Programming/Spikes/Spike_1/Spike_1/bin/Debug/MySql.Data.Entity.dll

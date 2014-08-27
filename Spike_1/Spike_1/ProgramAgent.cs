@@ -65,9 +65,9 @@ public class ProgramAgent
 			}
 		case "find":
 			{
-				Console.WriteLine ("");
-				foreach (string rowSet in _theHandler.Select(QueryFactory.GetSelectString ())) {
-					Console.WriteLine (rowSet);
+				Console.WriteLine ();
+				foreach (Archer archer in _theHandler.Select (QueryFactory.GetSelectString ())) {
+					Console.WriteLine (archer);
 				}
 				break;
 			}
