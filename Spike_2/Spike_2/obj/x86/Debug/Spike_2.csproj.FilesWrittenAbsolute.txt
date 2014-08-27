@@ -1,0 +1,10 @@
+/Users/reubenwilson/Dropbox/Swinburne/Student/2014/Semester 2/COS30009 - Database Programming/Assignments/Spike_2/Spike_2/obj/x86/Debug/.NETFramework,Version=v4.0.AssemblyAttribute.cs
+/Users/reubenwilson/Dropbox/Swinburne/Student/2014/Semester 2/COS30009 - Database Programming/Assignments/Spike_2/Spike_2/bin/Debug/Spike_2.exe.config
+/Users/reubenwilson/Dropbox/Swinburne/Student/2014/Semester 2/COS30009 - Database Programming/Assignments/Spike_2/Spike_2/bin/Debug/Spike_2.exe.mdb
+/Users/reubenwilson/Dropbox/Swinburne/Student/2014/Semester 2/COS30009 - Database Programming/Assignments/Spike_2/Spike_2/bin/Debug/Spike_2.exe
+/Users/reubenwilson/Dropbox/Swinburne/Student/2014/Semester 2/COS30009 - Database Programming/Assignments/Spike_2/Spike_2/obj/x86/Debug/Spike_2.exe
+/Users/reubenwilson/Dropbox/Swinburne/Student/2014/Semester 2/COS30009 - Database Programming/Assignments/Spike_2/Spike_2/obj/x86/Debug/Spike_2.exe.mdb
+/Users/reubenwilson/Dropbox/Swinburne/Student/2014/Semester 2/COS30009 - Database Programming/Assignments/Spike_2/Spike_2/bin/Debug/MySql.Data.dll
+/Users/reubenwilson/Dropbox/Swinburne/Student/2014/Semester 2/COS30009 - Database Programming/Assignments/Spike_2/Spike_2/bin/Debug/EntityFramework.dll
+/Users/reubenwilson/Dropbox/Swinburne/Student/2014/Semester 2/COS30009 - Database Programming/Assignments/Spike_2/Spike_2/bin/Debug/EntityFramework.SqlServer.dll
+/Users/reubenwilson/Dropbox/Swinburne/Student/2014/Semester 2/COS30009 - Database Programming/Assignments/Spike_2/Spike_2/bin/Debug/mysql.data.entity.EF6.dll
