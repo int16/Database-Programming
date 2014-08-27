@@ -1,0 +1,6 @@
+/Users/reubenwilson/Dropbox/Swinburne/Student/2014/Semester 2/COS30009 - Database Programming/Assignments/Spike_1/Spike_1/obj/x86/Debug/.NETFramework,Version=v4.0.AssemblyAttribute.cs
+/Users/reubenwilson/Dropbox/Swinburne/Student/2014/Semester 2/COS30009 - Database Programming/Assignments/Spike_1/Spike_1/bin/Debug/MySql.Data.dll
+/Users/reubenwilson/Dropbox/Swinburne/Student/2014/Semester 2/COS30009 - Database Programming/Assignments/Spike_1/Spike_1/bin/Debug/Spike_1.exe.mdb
+/Users/reubenwilson/Dropbox/Swinburne/Student/2014/Semester 2/COS30009 - Database Programming/Assignments/Spike_1/Spike_1/bin/Debug/Spike_1.exe
+/Users/reubenwilson/Dropbox/Swinburne/Student/2014/Semester 2/COS30009 - Database Programming/Assignments/Spike_1/Spike_1/obj/x86/Debug/Spike_1.exe
+/Users/reubenwilson/Dropbox/Swinburne/Student/2014/Semester 2/COS30009 - Database Programming/Assignments/Spike_1/Spike_1/obj/x86/Debug/Spike_1.exe.mdb
