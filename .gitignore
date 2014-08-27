@@ -1,0 +1,14 @@
+# Ignore everything
+*
+
+# Allow these file types
+!*.cs
+!*.csproj
+!*.pages
+!*.pdf
+!*.jpg
+!*.md
+!.gitignore
+
+# Allow directories
+!*/
