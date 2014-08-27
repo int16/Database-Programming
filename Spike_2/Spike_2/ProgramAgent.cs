@@ -74,7 +74,7 @@ public class ProgramAgent
 		case "delete":
 			{
 				Console.WriteLine ("");
-				_theHandler.Delete ();
+				_theHandler.Delete (InputDataValidator.ReadString("Specify the table you wish to delete from (competition or rule): "));
 				break;
 			}
 		case "quit":

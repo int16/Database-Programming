@@ -17,6 +17,7 @@ public class DBHandler
 	private string _user;
 	private string _password;
 	private DataSet _theDataSet;
+	private DataRelation _theRelation;
 
 	public DBHandler ()
 	{
@@ -26,6 +27,8 @@ public class DBHandler
 		_password = "021190";
 		string connectionString = "Server=" + _serverName + ";Database=" + _databaseName + ";User ID=" + _user + ";Pwd=" + _password + ";";
 		_connection = new MySqlConnection (connectionString);
+		_theDataSet = new DataSet ();
+		PopulateDataSetAndRelation ();
 	}
 
 	private void OpenConnection()
@@ -58,32 +61,91 @@ public class DBHandler
 		}
 	}
 
-	public void Delete(){
-		try
+	private void PopulateDataSetAndRelation()
+	{
+		OpenConnection ();
+		MySqlDataAdapter competitionAdapter = new MySqlDataAdapter("SELECT * FROM multieventcompetition", _connection);
+		MySqlDataAdapter ruleAdapter = new MySqlDataAdapter("SELECT * FROM multieventrule", _connection);
+		competitionAdapter.Fill(_theDataSet, "Competition");
+		ruleAdapter.Fill(_theDataSet, "Rules");
+
+		_theRelation = _theDataSet.Relations.Add("Events",
+		_theDataSet.Tables["Competition"].Columns["id"],
+		_theDataSet.Tables["Rules"].Columns["multieventcomp_id"]);
+		DataColumn[] keyColumn = new DataColumn[2];
+
+		keyColumn[0] = _theDataSet.Tables["Rules"].Columns["multieventcomp_id"];
+		keyColumn[1] = _theDataSet.Tables["Rules"].Columns["round_id"];
+		_theDataSet.Tables["Rules"].PrimaryKey = keyColumn;
+	}
+
+	public void Delete(string fromTable){
+		OpenConnection ();
+		switch (fromTable.ToLower())
 		{
-			OpenConnection ();
-			string compToDelete = InputDataValidator.ReadString ("Enter competition name to delete: "); 
-			MySqlDataAdapter adapter = new MySqlDataAdapter("SELECT * FROM multieventcompetition", _connection);
-			adapter.DeleteCommand = new MySqlCommandBuilder(adapter).GetDeleteCommand();
-			DataSet dataSet = new DataSet();
-			adapter.Fill (dataSet, "Competition");
-			int changes = 0;
-			for (int i = 0; i < dataSet.Tables ["Competition"].Rows.Count; i++) 
+		case "competition":
 			{
-				if (dataSet.Tables ["Competition"].Rows[i] ["comp_name"].ToString() == compToDelete) {
-					dataSet.Tables ["Competition"].Rows [i].Delete ();
-					changes++;
-					break;
+				string compToDelete = InputDataValidator.ReadString ("Enter competition name to delete: "); 
+				MySqlDataAdapter adapter = new MySqlDataAdapter("SELECT * FROM multieventcompetition", _connection);
+				adapter.DeleteCommand = new MySqlCommandBuilder(adapter).GetDeleteCommand();
+				Console.WriteLine (adapter.DeleteCommand.CommandText);
+				for (int i = 0; i < _theDataSet.Tables ["Competition"].Rows.Count; i++) 
+				{
+					if (_theDataSet.Tables ["Competition"].Rows[i] ["comp_name"].ToString() == compToDelete) 
+					{
+						int idOfComp = int.Parse(_theDataSet.Tables ["Competition"].Rows[i] ["id"].ToString());
+						for (int j = 0; j < _theDataSet.Tables ["Rules"].Rows.Count; j++) 
+						{
+							if (int.Parse(_theDataSet.Tables ["Rules"].Rows[j] ["multieventcomp_id"].ToString()) == idOfComp)
+							{
+								Console.WriteLine("You can't delete this competition because it has child relationships in the Rules table.");
+								break;
+							}
+							else
+							{
+								_theDataSet.Tables ["Competition"].Rows [i].Delete ();
+								adapter.Update (_theDataSet, "Competition");
+								break;
+							}
+						}
+					}
+					else
+					{
+						Console.WriteLine("The competition you have specified does not exist.");
+					}
 				}
+				break;
 			}
-			adapter.Update (dataSet, "Competition");
-			Console.WriteLine(changes + " changes were made to the database.");
-			CloseConnection ();
+		case "rule":
+			{
+				int ruleCompId = InputDataValidator.ReadInteger ("Enter the competition ID that applies to the rule you wish to delete: ");
+				int ruleRoundId = InputDataValidator.ReadInteger ("Enter the round ID that applies to the rule you wish to delete: "); 
+				MySqlDataAdapter adapter = new MySqlDataAdapter("SELECT * FROM multieventrule", _connection);
+				adapter.DeleteCommand = new MySqlCommand("DELETE FROM `multieventrule` WHERE ((`multieventcomp_id` = @p1) AND (`round_id` = @p2))");
+				adapter.DeleteCommand.Parameters.AddWithValue ("@p1", ruleCompId);
+				adapter.DeleteCommand.Parameters.AddWithValue ("@p2", ruleRoundId);
+				for (int i = 0; i < _theDataSet.Tables ["Rules"].Rows.Count; i++) 
+				{
+					if ((int.Parse(_theDataSet.Tables ["Rules"].Rows[i] ["multieventcomp_id"].ToString()) == ruleCompId) && (int.Parse(_theDataSet.Tables ["Rules"].Rows[i] ["round_id"].ToString()) == ruleRoundId))
+					{
+						_theDataSet.Tables ["Rules"].Rows [i].Delete ();
+						adapter.Update (_theDataSet, "Rules");
+						break;
+					}
+					else
+					{
+						Console.WriteLine("The rule you have specified does not exist.");
+					}
+				}
+				break;
+			}
+		default:
+			{
+				Console.WriteLine("You have specified an invalid table name.");
+				break;
+			}
 		}
-		catch (SystemException ex) 
-		{
-			Console.WriteLine (ex + "Specified records could not be deleted.");
-		}
+		CloseConnection ();
 	}
 
 	public void Update(){
