@@ -53,7 +53,7 @@ public class ProgramAgent
 		case "find":
 			{
 				Console.WriteLine ("");
-				foreach (string rowSet in _theHandler.Select()) {
+				foreach (string rowSet in _theHandler.Select(InputDataValidator.ReadString("Specify the table you wish to select from (competition or rule): "))) {
 					Console.WriteLine (rowSet);
 				}
 				break;

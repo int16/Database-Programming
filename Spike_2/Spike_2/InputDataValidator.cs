@@ -50,5 +50,16 @@ public class InputDataValidator
 		}
 		return result.ToUpper ();
 	}
+
+	public static string ReadRule(string prompt)
+	{
+		string result = ReadString (prompt);
+		while (!(result.ToUpper () == "ALL" || result.ToUpper () == "MAX" || result.ToUpper () == "AVG"))
+		{
+			Console.WriteLine (result.ToUpper() + " is not a valid rule.");
+			result = ReadString (prompt);
+		}
+		return result.ToUpper ();
+	}
 }
 

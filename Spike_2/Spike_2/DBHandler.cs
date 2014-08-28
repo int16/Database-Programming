@@ -6,8 +6,6 @@ using System.Data.SqlTypes;
 using MySql.Data.MySqlClient;
 using MySql.Data.Types;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using MySql.Data.MySqlClient;
 
 public class DBHandler
 {
@@ -118,7 +116,7 @@ public class DBHandler
 					}
 					else
 					{
-						Console.WriteLine("The competition you have specified does not exist.");
+						Console.WriteLine("\nThe competition you have specified does not exist.\n");
 					}
 				}
 				break;
@@ -139,14 +137,14 @@ public class DBHandler
 					}
 					else
 					{
-						Console.WriteLine("The rule you have specified does not exist.");
+						Console.WriteLine("\nThe rule you have specified does not exist.\n");
 					}
 				}
 				break;
 			}
 		default:
 			{
-				Console.WriteLine("You have specified an invalid table name.");
+				Console.WriteLine("\nYou have specified an invalid table name.\n");
 				break;
 			}
 		}
@@ -193,7 +191,7 @@ public class DBHandler
 					}
 					else
 					{
-						Console.WriteLine("You have specified invalid input.\nNo updates occurred.\n");
+						Console.WriteLine("\nYou have specified invalid input.\nNo updates occurred.\n");
 					}
 				}
 				break;
@@ -237,7 +235,7 @@ public class DBHandler
 				DataRow newRuleRow = tblRule.NewRow ();
 				newRuleRow ["multieventcomp_id"] = InputDataValidator.ReadInteger ("Enter the competition ID: ");
 				newRuleRow ["round_id"] = InputDataValidator.ReadInteger ("Enter the round ID: ");
-				newRuleRow ["calc_rules"] = "MAX";
+				newRuleRow ["calc_rules"] = InputDataValidator.ReadRule ("Enter the rule type: ");
 				newRuleRow ["events_included"] = InputDataValidator.ReadInteger ("Enter the events included: ");
 				for (int i = 0; i < _theDataSet.Tables ["Competition"].Rows.Count; i++) {
 					if ((int.Parse (_theDataSet.Tables ["Competition"].Rows [i] ["id"].ToString ()) == int.Parse(newRuleRow ["multieventcomp_id"].ToString ()))) 
@@ -248,7 +246,7 @@ public class DBHandler
 					} 
 					else 
 					{
-						Console.WriteLine ("You have specified invalid input.\nNo insert occurred.\n");
+						Console.WriteLine ("\nYou have specified invalid input.\nNo insert occurred.\n");
 					}
 				}
 				break;
@@ -261,69 +259,68 @@ public class DBHandler
 		CloseConnection ();
 	}
 
-	public List<string> Select()
+	public List<string> Select(string theTable)
 	{
 		List<String> result = new List<String>();
 		OpenConnection ();
-		MySqlDataAdapter mecAdapter = new MySqlDataAdapter(
-			"SELECT * " +
-			"FROM multieventcompetition", _connection);
-		DataSet events = new DataSet();
-		mecAdapter.Fill(events, "Competition");
-		string compToFind = InputDataValidator.ReadString ("Enter competition name to find: ");
-		foreach (DataRow pRow in events.Tables["Competition"].Rows)
-		{
-			if (compToFind == pRow["comp_name"].ToString())
+		switch (theTable.ToLower ()) {
+		case "competition":
 			{
-				string rowResult = "";
-				rowResult += "Competition ID: " + pRow["id"].ToString() + " " + pRow["comp_name"].ToString();
-				result.Add(rowResult);
+				string compToFind = InputDataValidator.ReadString ("Enter competition name to find: ");
+				foreach (DataRow pRow in _theDataSet.Tables["Competition"].Rows)
+				{
+					if (compToFind == pRow["comp_name"].ToString())
+					{
+						string rowResult = "";
+						rowResult += "Competition ID: " + pRow["id"].ToString() + " " + pRow["comp_name"].ToString();
+						result.Add(rowResult);
+						break;
+					}
+				}
+				break;
+			}
+		case "rule":
+			{
+				int ruleCompId = InputDataValidator.ReadInteger ("Enter the competition ID that applies to the rule you wish to select: ");
+				int ruleRoundId = InputDataValidator.ReadInteger ("Enter the round ID that applies to the rule you wish to select: "); 
+				foreach (DataRow pRow in _theDataSet.Tables["Rules"].Rows)
+				{
+					if (ruleCompId == int.Parse(pRow["multieventcomp_id"].ToString()) && ruleRoundId == int.Parse(pRow["round_id"].ToString()))
+					{
+						string rowResult = "";
+						rowResult += "Competition ID for rule: " + pRow["multieventcomp_id"].ToString() + ". Round ID: " + pRow["round_id"].ToString();
+						result.Add(rowResult);
+						break;
+					}
+				}
+				break;
+			}
+		default:
+			{
+
 				break;
 			}
 		}
-		CloseConnection ();
 		return result;
+		CloseConnection ();
 	}
 		
 	public List<string> List()
 	{
 		List<String> result = new List<String>();
-		try
-		{
-			OpenConnection ();
-			MySqlDataAdapter merAdapter = new MySqlDataAdapter(
-				"SELECT * FROM multieventcompetition", _connection);
-			MySqlDataAdapter mecAdapter = new MySqlDataAdapter(
-				"SELECT * FROM multieventrule", _connection);
-
-			DataSet events = new DataSet();
-
-			mecAdapter.Fill(events, "Rules");
-			merAdapter.Fill(events, "Competition");
-
-			DataRelation relation = events.Relations.Add("Events",
-				events.Tables["Competition"].Columns["id"],
-				events.Tables["Rules"].Columns["multieventcomp_id"]);
 	
-			foreach (DataRow pRow in events.Tables["Competition"].Rows)
-			{
-				string rowResult = "";
-				rowResult += "Competition ID: " + pRow["id"].ToString() +  " Round ID's: ";
-				foreach (DataRow cRow in pRow.GetChildRows(relation))
-				{
-					rowResult += cRow["round_id"] + " ";
-				}
-				result.Add(rowResult);
-			}
-			CloseConnection ();
-			return result;
-		}
-		catch (SystemException ex) 
+		foreach (DataRow pRow in _theDataSet.Tables["Competition"].Rows)
 		{
-			Console.WriteLine (ex + "DataSet could not be initialised properly.");
-			return null;
-
+			string rowResult = "";
+			rowResult += "Competition ID: " + pRow["id"].ToString() +  " Round ID's: ";
+			foreach (DataRow cRow in pRow.GetChildRows(_theRelation))
+			{
+				rowResult += cRow["round_id"] + " ";
+			}
+			result.Add(rowResult);
 		}
+		CloseConnection ();
+		return result;
 	}
 }
 
