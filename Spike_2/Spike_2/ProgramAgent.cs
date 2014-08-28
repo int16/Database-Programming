@@ -62,13 +62,13 @@ public class ProgramAgent
 			{
 				Console.WriteLine ("");
 				_theHandler.
-				Insert ();
+				Insert (InputDataValidator.ReadString("Specify the table you wish to insert into (competition or rule): "));
 				break;
 			}
 		case "update":
 			{
 				Console.WriteLine ("");
-				_theHandler.Update ();
+				_theHandler.Update (InputDataValidator.ReadString("Specify the table you wish to update (competition or rule): "));
 				break;
 			}
 		case "delete":
