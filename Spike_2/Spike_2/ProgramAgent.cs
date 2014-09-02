@@ -53,7 +53,7 @@ public class ProgramAgent
 		case "find":
 			{
 				Console.WriteLine ("");
-				foreach (string rowSet in _theHandler.Select()) {
+				foreach (string rowSet in _theHandler.Select(InputDataValidator.ReadString("Specify the table you wish to select from (competition or rule): "))) {
 					Console.WriteLine (rowSet);
 				}
 				break;
@@ -62,19 +62,19 @@ public class ProgramAgent
 			{
 				Console.WriteLine ("");
 				_theHandler.
-				Insert ();
+				Insert (InputDataValidator.ReadString("Specify the table you wish to insert into (competition or rule): "));
 				break;
 			}
 		case "update":
 			{
 				Console.WriteLine ("");
-				_theHandler.Update ();
+				_theHandler.Update (InputDataValidator.ReadString("Specify the table you wish to update (competition or rule): "));
 				break;
 			}
 		case "delete":
 			{
 				Console.WriteLine ("");
-				_theHandler.Delete ();
+				_theHandler.Delete (InputDataValidator.ReadString("Specify the table you wish to delete from (competition or rule): "));
 				break;
 			}
 		case "quit":
