@@ -1,15 +1,13 @@
-# Ignore everything
-*
+.DS_Store
 
-# Allow these file types
-!*.cs
-!*.csproj
-!*.pages
-!*.pdf
-!*.jpg
-!*.png
-!*.md
-!.gitignore
+# Compiled
+*.exe
+*.exe.config
+*.dll
+*.o
+*.so
+*.mdb
 
-# Allow directories
-!*/
+# Packages
+*.transform
+*.nupkg
