@@ -99,7 +99,7 @@ public class DBHandler
 					if (_theDataSet.Tables ["Competition"].Rows[i] ["comp_name"].ToString() == compToDelete) 
 					{
 						int idOfComp = int.Parse(_theDataSet.Tables ["Competition"].Rows[i] ["id"].ToString());
-						for (int j = 0; j < _theDataSet.Tables ["Rules"].Rows.Count; j++) 
+						for (int j = 0; j < _theDataSet.Tables ["Rules"].Rows.Count;) 
 						{
 							if (int.Parse(_theDataSet.Tables ["Rules"].Rows[j] ["multieventcomp_id"].ToString()) == idOfComp)
 							{
@@ -117,6 +117,7 @@ public class DBHandler
 					else
 					{
 						Console.WriteLine("\nThe competition you have specified does not exist.\n");
+						break;
 					}
 				}
 				break;
@@ -127,7 +128,7 @@ public class DBHandler
 				int ruleRoundId = InputDataValidator.ReadInteger ("Enter the round ID that applies to the rule you wish to delete: "); 
 				MySqlDataAdapter adapter = new MySqlDataAdapter("SELECT * FROM multieventrule", _connection);
 				adapter.DeleteCommand = new MySqlCommandBuilder(adapter).GetDeleteCommand();
-				for (int i = 0; i < _theDataSet.Tables ["Rules"].Rows.Count; i++) 
+				for (int i = 0; i < _theDataSet.Tables ["Rules"].Rows.Count; ) 
 				{
 					if ((int.Parse(_theDataSet.Tables ["Rules"].Rows[i] ["multieventcomp_id"].ToString()) == ruleCompId) && (int.Parse(_theDataSet.Tables ["Rules"].Rows[i] ["round_id"].ToString()) == ruleRoundId))
 					{
@@ -138,6 +139,7 @@ public class DBHandler
 					else
 					{
 						Console.WriteLine("\nThe rule you have specified does not exist.\n");
+						break;
 					}
 				}
 				break;
@@ -157,7 +159,7 @@ public class DBHandler
 		{
 		case "competition":
 			{
-				string compToUpdate = InputDataValidator.ReadString ("Eneter competition name to update: "); 
+				string compToUpdate = InputDataValidator.ReadString ("Enter competition name to update: "); 
 				MySqlDataAdapter adapter = new MySqlDataAdapter("SELECT * FROM multieventcompetition", _connection);
 				adapter.UpdateCommand = new MySqlCommandBuilder(adapter).GetUpdateCommand();
 				DataSet dataSet = new DataSet();
@@ -176,11 +178,13 @@ public class DBHandler
 			}
 		case "rule":
 			{
-				int ruleCompId = InputDataValidator.ReadInteger ("Enter the competition ID that applies to the rule you wish to update: ");
-				int ruleRoundId = InputDataValidator.ReadInteger ("Enter the round ID that applies to the rule you wish to update: "); 
 				int newRuleCompId = InputDataValidator.ReadInteger ("Specify the competition ID that will now apply to the rule: ");
 				MySqlDataAdapter adapter = new MySqlDataAdapter("SELECT * FROM multieventrule", _connection);
 				adapter.UpdateCommand = new MySqlCommandBuilder(adapter).GetUpdateCommand();
+				if (_theDataSet.Tables ["Competition"].Rows.Count <= 0) {
+					Console.WriteLine ("\nNo data found.\nNo updates occured.");
+					break;
+				}
 				for (int i = 0; i < _theDataSet.Tables ["Competition"].Rows.Count; i++) 
 				{
 					if ((int.Parse(_theDataSet.Tables ["Competition"].Rows[i] ["id"].ToString()) == newRuleCompId))
@@ -237,11 +241,18 @@ public class DBHandler
 				newRuleRow ["round_id"] = InputDataValidator.ReadInteger ("Enter the round ID: ");
 				newRuleRow ["calc_rules"] = InputDataValidator.ReadRule ("Enter the rule type: ");
 				newRuleRow ["events_included"] = InputDataValidator.ReadInteger ("Enter the events included: ");
-				for (int i = 0; i < _theDataSet.Tables ["Competition"].Rows.Count; i++) {
+				for (int i = 0; i < _theDataSet.Tables ["Competition"].Rows.Count; i++)
+				{
 					if ((int.Parse (_theDataSet.Tables ["Competition"].Rows [i] ["id"].ToString ()) == int.Parse(newRuleRow ["multieventcomp_id"].ToString ()))) 
 					{
 						dataSet.Tables ["Rules"].Rows.Add (newRuleRow);
-						adapter.Update (dataSet, "Rules");
+						try
+						{
+							adapter.Update (dataSet, "Rules");
+						} catch (MySqlException e)
+						{
+							Console.WriteLine("\nDuplicate entry.\nNo insert occured.");
+						}
 						break;
 					} 
 					else 
@@ -301,8 +312,8 @@ public class DBHandler
 				break;
 			}
 		}
-		return result;
 		CloseConnection ();
+		return result;
 	}
 		
 	public List<string> List()

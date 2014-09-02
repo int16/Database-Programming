@@ -11,6 +11,12 @@ public class InputDataValidator
 		return Console.ReadLine ();
 	}
 
+	public static string ReadCleanString(string prompt)
+	{
+		string result = ReadString (prompt);
+		return result.Trim ().ToLower ();
+	} 
+
 	public static int ReadIntegerRange(int min, int max)
 	{
 		int result = ReadInteger ("Enter a number between " + min + " and " + max + ": ");

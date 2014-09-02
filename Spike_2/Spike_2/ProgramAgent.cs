@@ -10,7 +10,6 @@ using System.Collections.Generic;
 public class ProgramAgent
 {
 	bool _isRunning;
-	string _menuOption;
 	DBHandler _theHandler;
 
 	public ProgramAgent (DBHandler theHandler)
@@ -35,17 +34,18 @@ public class ProgramAgent
 		Console.WriteLine ("[update] - Update a row in the archer table   ");
 		Console.WriteLine ("[delete] - Delete a row from the archer table ");
 		Console.WriteLine ("[quit]   - Terminate this program             ");
-		_menuOption = InputDataValidator.ReadString ("--> ");
-		ProcessMenuOptionForDBHandler ();
+		string option = InputDataValidator.ReadCleanString ("--> ");
+		ProcessMenuOptionForDBHandler (option);
 	}
 
-	private void ProcessMenuOptionForDBHandler()
+	private void ProcessMenuOptionForDBHandler(string option)
 	{
-		switch (_menuOption.ToLower ()) {
+		switch (option) {
 		case "list":
 			{
 				Console.WriteLine ("");
-				foreach (string rowSet in _theHandler.List()) {
+				foreach (string rowSet in _theHandler.List())
+				{
 					Console.WriteLine (rowSet);
 				}
 				break;
@@ -53,7 +53,8 @@ public class ProgramAgent
 		case "find":
 			{
 				Console.WriteLine ("");
-				foreach (string rowSet in _theHandler.Select(InputDataValidator.ReadString("Specify the table you wish to select from (competition or rule): "))) {
+				foreach (string rowSet in _theHandler.Select(InputDataValidator.ReadString("Specify the table you wish to select from (competition or rule): ")))
+				{
 					Console.WriteLine (rowSet);
 				}
 				break;
@@ -61,8 +62,7 @@ public class ProgramAgent
 		case "insert":
 			{
 				Console.WriteLine ("");
-				_theHandler.
-				Insert (InputDataValidator.ReadString("Specify the table you wish to insert into (competition or rule): "));
+				_theHandler.Insert (InputDataValidator.ReadString("Specify the table you wish to insert into (competition or rule): "));
 				break;
 			}
 		case "update":
