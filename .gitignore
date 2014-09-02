@@ -11,3 +11,8 @@
 # Packages
 *.transform
 *.nupkg
+
+# Directories
+bin/
+obj/
+packages/
