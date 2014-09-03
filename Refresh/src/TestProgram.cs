@@ -13,5 +13,6 @@ public class TestProgram {
 			Console.WriteLine(s);
 		}
 
+		database.Delete("120", "archer");
 	}
 }
