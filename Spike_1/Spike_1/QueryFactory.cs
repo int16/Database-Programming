@@ -21,18 +21,22 @@ public class QueryFactory
 	{
 		string insertString =
 			"INSERT INTO archer "
-			+ "(archived, fin_year, gender, surname, given_name, birthyear, default_equipment_id, default_discipline_id) "
+			+ "(archived, last_updated, fin_year, gender, surname, given_name, join_date, birthyear, default_equipment_id, default_discipline_id) "
 			+ "values "
-			+ "(@archived, @fin_year, '@gender', '@surname', '@given_name', @birthyear, @default_equipment_id, @defualt_discipline_id);";
+			+ "(@archived, '@last_updated', @fin_year, '@gender', '@surname', '@given_name', '@join_date', @birthyear, @default_equipment_id, @defualt_discipline_id);";
 		MySqlCommand command = new MySqlCommand(insertString);
 		command.Parameters.AddWithValue ("@archived", InputDataValidator.ReadInteger("Enter an intger value for archived column: "));
+		command.Parameters.AddWithValue("@last_updated", DateTime.Now.ToString ("yyyy-MM-dd"));
 		command.Parameters.AddWithValue ("@fin_year", InputDataValidator.ReadYear("Enter a year value for finished year column: "));
 		command.Parameters.AddWithValue ("@gender", InputDataValidator.ReadGender("Enter a gender value for gender column: "));
 		command.Parameters.AddWithValue ("@surname", InputDataValidator.ReadString ("Enter a surname for the surname column: "));
 		command.Parameters.AddWithValue("@given_name", InputDataValidator.ReadString("Enter a first name for the given_name column: "));
+		command.Parameters.AddWithValue("@join_date", DateTime.Now.ToString ("yyyy-MM-dd"));
 		command.Parameters.AddWithValue("@birthyear", InputDataValidator.ReadYear("Enter a year value for birth year column: "));
-		command.Parameters.AddWithValue("@default_equipment_id", InputDataValidator.ReadInteger("Enter an intger value for default equipment column: "));
+		command.Parameters.AddWithValue("@d" +
+			"efault_equipment_id", InputDataValidator.ReadInteger("Enter an intger value for default equipment column: "));
 		command.Parameters.AddWithValue("@defualt_discipline_id", InputDataValidator.ReadInteger("Enter an intger value for default discipline column: "));
+
 		return GetQueryStringFromCommand(command);
 	}
 

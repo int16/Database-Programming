@@ -24,7 +24,7 @@ public class ProgramAgent
 	{
 		Console.WriteLine ("");
 		Console.WriteLine ("Please specify one of the following options: ");
-		Console.WriteLine ("[list]   - List 10 rows from archer table     ");
+		Console.WriteLine ("[list]   - List 10 Archer objects (populated from archer table)    ");
 		Console.WriteLine ("[insert] - Insert a new row into archer table ");
 		Console.WriteLine ("[update] - Update a row in the archer table   ");
 		Console.WriteLine ("[delete] - Delete a row from the archer table ");
@@ -40,8 +40,8 @@ public class ProgramAgent
 		case "list":
 			{
 				Console.WriteLine ("");
-				foreach (string rowSet in _theHandler.List()) {
-					Console.WriteLine (rowSet);
+				foreach (Archer archer in _theHandler.List()) {
+					Console.WriteLine (archer);
 				}
 				break;
 			}

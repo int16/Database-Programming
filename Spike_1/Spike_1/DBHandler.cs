@@ -19,7 +19,7 @@ public class DBHandler
 		_serverName = "localhost";
 		_databaseName = "archery_db";
 		_user = "root";
-		_password = "password";
+		_password = "021190";
 		string connectionString = "Server=" + _serverName + ";Port=3306;Database=" + _databaseName + ";User ID=" + _user + ";Pwd=" + _password + ";";
 		_connection = new MySqlConnection (connectionString);
 
@@ -56,38 +56,42 @@ public class DBHandler
 		}
 	}
 
-	public List<string> List()
+	public List<Archer> List()
 	{
-		List<String> result = new List<String>();
 		string queryString = "SELECT * FROM archer LIMIT 10;";
 		OpenConnection ();
-		MySqlCommand command = new MySqlCommand(queryString, _connection);
-		try
+		MySqlCommand command = new MySqlCommand (queryString, _connection);
+		List<Archer> results = new List<Archer> ();
+		MySqlDataReader reader = command.ExecuteReader();
+		while (reader.Read())
 		{
-
-			int numberOfRecords = 0;
-			MySqlDataReader reader = command.ExecuteReader();
-			while (reader.Read())
+			if (reader.FieldCount != 17)
 			{
-				string rowResult = "*";
-				for (int i = 0; i < reader.FieldCount; i++)
-				{
-					rowResult += " " + reader[i].ToString();
-				}
-				result.Add(rowResult);
-				numberOfRecords++;
+				Console.WriteLine ("Error! Incorrect data!");
+				return null;
 			}
-			Console.WriteLine(numberOfRecords + " results returned.");
-			reader.Close();
-			CloseConnection();
-			return result;
+			Archer archer = new Archer ();
+
+			archer.id = int.Parse(reader[0].ToString());
+			archer.last_updated = reader[1].ToString();
+			archer.archived = bool.Parse(reader[2].ToString());
+			archer.fin_year = int.Parse(reader[3].ToString());
+			archer.gender = char.Parse(reader[4].ToString());
+			archer.surname = reader[5].ToString();
+			archer.given_name = reader[6].ToString();
+			archer.initial = reader[7].ToString().Length > 0 ? char.Parse(reader[7].ToString()) : ' ';
+			archer.join_date = reader [8].ToString ();
+			archer.birthyear = int.Parse(reader[9].ToString());
+			archer.default_equipment_id = int.Parse(reader[15].ToString());
+			archer.default_discipline_id = int.Parse(reader[16].ToString());
+
+			results.Add (archer);
 		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e.Message);
-			CloseConnection();
-			return null;
-		}
+
+		Console.WriteLine(results.Capacity + " results returned.\n");
+		reader.Close();
+		CloseConnection();
+		return results;
 	}
 
 	public void ExecuteNonQuery(string nonQueryString)
@@ -133,14 +137,8 @@ public class DBHandler
 			archer.gender = char.Parse(reader[4].ToString());
 			archer.surname = reader[5].ToString();
 			archer.given_name = reader[6].ToString();
-			archer.initial = reader[7].ToString().Length > 0 ? char.Parse(reader[7].ToString()) : ' ';
-			archer.join_date = reader[8].ToString();
+			archer.join_date = reader [8].ToString ();
 			archer.birthyear = int.Parse(reader[9].ToString());
-			archer.status = char.Parse(reader[10].ToString());
-			archer.club = reader[11].ToString();
-			archer.notes = reader[12].ToString();
-			archer.title = reader[13].ToString();
-			archer.id_number = int.Parse(reader[14].ToString());
 			archer.default_equipment_id = int.Parse(reader[15].ToString());
 			archer.default_discipline_id = int.Parse(reader[16].ToString());
 
@@ -148,7 +146,6 @@ public class DBHandler
 		}
 
 		Console.WriteLine(results.Capacity + " results returned.\n");
-
 		reader.Close();
 		CloseConnection();
 		return results;
