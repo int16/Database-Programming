@@ -249,7 +249,8 @@ public class DBHandler
 						try
 						{
 							adapter.Update (dataSet, "Rules");
-						} catch (MySqlException e)
+						} 
+						catch (MySqlException e)
 						{
 							Console.WriteLine("\nDuplicate entry.\nNo insert occured.");
 						}
@@ -280,12 +281,15 @@ public class DBHandler
 				string compToFind = InputDataValidator.ReadString ("Enter competition name to find: ");
 				foreach (DataRow pRow in _theDataSet.Tables["Competition"].Rows)
 				{
-					if (compToFind == pRow["comp_name"].ToString())
-					{
+					if (compToFind == pRow ["comp_name"].ToString ()) {
 						string rowResult = "";
-						rowResult += "Competition ID: " + pRow["id"].ToString() + " " + pRow["comp_name"].ToString();
-						result.Add(rowResult);
+						rowResult += "Competition ID: " + pRow ["id"].ToString () + " " + pRow ["comp_name"].ToString ();
+						result.Add (rowResult);
 						break;
+					} 
+					else 
+					{
+						Console.WriteLine ("\nNo data could be found.\nPlease check your input and try again\n");
 					}
 				}
 				break;
@@ -302,6 +306,10 @@ public class DBHandler
 						rowResult += "Competition ID for rule: " + pRow["multieventcomp_id"].ToString() + ". Round ID: " + pRow["round_id"].ToString();
 						result.Add(rowResult);
 						break;
+					}
+					else 
+					{
+						Console.WriteLine ("\nNo data could be found.\nPlease check your input and try again\n");
 					}
 				}
 				break;
