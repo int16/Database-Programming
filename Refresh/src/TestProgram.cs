@@ -1,15 +1,19 @@
-﻿using System;
+﻿#define DEBUG
+
+using System;
 using System.Data;
 using System.Collections.Generic;
 
-
 public class TestProgram {
+
 
 	private Database database;
 
 	private TestProgram() {
 		database = new Database("archery_db", "localhost", "root", "021190");
 		database.Populate();
+		database.ExecuteNonQuery("ALTER TABLE multieventrule ADD PRIMARY KEY (multieventcomp_id, round_id)");
+		database.CreateRelation("relate", "multieventcompetition", "id", "multieventrule", "multieventcomp_id");
 	}
 
 	private void GetInfo() {
@@ -22,16 +26,13 @@ public class TestProgram {
 
 		Console.WriteLine("Columns");
 		Console.WriteLine("=======");
-		foreach (string s in database.GetColumns("archer")) {
+		foreach (string s in database.GetColumns("face")) {
 			Console.WriteLine(s);
 		}
-		//foreach (string col in database.AllColumns["archer"]) {
-		//		Console.WriteLine(col);
-		//	}
 	}
 
 	private void Search() {
-		List<string> results = database.FindExact("M", "archer");
+		List<string> results = database.Find("2013", "archer");
 		if (results.Count == 0) Console.WriteLine("No results found.");
 		foreach (string s in results) {
 			Console.WriteLine(s);
@@ -52,9 +53,27 @@ public class TestProgram {
 		database.Delete("120", "archer");
 	}
 
+	private void List() {
+		List<string> list = database.List("face");
+		foreach (string s in list) {
+			Console.WriteLine(s);
+		}
+	}
+
+	private void Relation() {
+		List<DataRow[]> rows = database.GetChildRows("multieventcompetition", "relate");
+		foreach (DataRow[] r in rows) {
+			foreach (DataRow row in r) {
+				for (int i = 0; i < row.ItemArray.Length; i++) {
+					Console.Write(row[i] + " ");
+				}
+				Console.WriteLine();
+			}
+		}
+	}
 
 	public static void Main(string[] args) {
 		TestProgram test = new TestProgram();
-		test.GetInfo();
+		test.Relation();
 	}
 }

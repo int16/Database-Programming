@@ -11,7 +11,10 @@ public class Database {
 
 	private MySqlConnection connection;
 	private DataSet data;
+
 	private List<string> tables = new List<string>();
+
+	private Dictionary<string, DataRelation> relations = new Dictionary<string, DataRelation>();
 	private Dictionary<string, List<string>> columns = new Dictionary<string, List<string>>();
 	private Dictionary<string, MySqlDataAdapter> adapters = new Dictionary<string, MySqlDataAdapter>();
 
@@ -46,7 +49,9 @@ public class Database {
 			}
 			return false;
 		} catch (MySqlException e) {
-			Console.WriteLine(e.Message);
+			#if DEBUG
+				Console.WriteLine(e.Message);
+			#endif
 			return false;
 		}
 	}
@@ -100,10 +105,19 @@ public class Database {
 		return new MySqlDataAdapter(sql, connection);
 	}
 
+	public void CreateRelation(string name, string ptable, string pcol, string ctable, string ccol) {
+		DataTable parent = data.Tables[ptable];
+		if (parent == null) return; // Invalid table name specified
+		DataTable child = data.Tables[ctable];
+		if (child == null) return; // Invalid table name specified
+		DataRelation relation = data.Relations.Add(name, parent.Columns[pcol], child.Columns[ccol]);
+		relations.Add(name, relation);
+	}
+
 	public List<string> Find(string keywords, string table) {
 		List<string> results = new List<string>();
 		string[] search = new string[1];
-		if (keywords.Contains(" ")) keywords.Split(keywords.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+		if (keywords.Contains(" ")) search = keywords.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 		else search[0] = keywords;
 		DataTable t = data.Tables[table];
 		if (t == null) return null; // Invalid table name specified
@@ -221,6 +235,44 @@ public class Database {
 		row.Delete();
 		adapters[table].DeleteCommand = new MySqlCommandBuilder(adapters[table]).GetDeleteCommand();
 		adapters[table].Update(data, table);
+		return true;
+	}
+
+	public List<string> List(string table) {
+		DataTable t = data.Tables[table];
+		if (t == null) return null; // Invalid table name specified
+		List<string> results = new List<string>();
+		foreach (DataRow row in t.Rows) {
+			string r = "";
+			foreach (DataColumn col in t.Columns) {
+				r += row[col] + " ";
+			}
+			results.Add(r.Trim());
+		}
+		return results;
+	}
+
+	public List<DataRow[]> GetChildRows(string table, string relation) {
+		List<DataRow[]> results = new List<DataRow[]>();
+		foreach (DataRow row in data.Tables[table].Rows) {
+			DataRow[] rows = row.GetChildRows(relation);
+			results.Add(rows);
+		}
+		return results;
+	}
+
+	public bool ExecuteNonQuery(string sql) {
+		bool connected = Connect();
+		MySqlCommand command = new MySqlCommand(sql, connection);
+		try {
+			command.ExecuteNonQuery();
+		} catch (MySqlException e) {
+			#if DEBUG
+				Console.WriteLine("Error! " + e.Message);
+			#endif
+			return false;
+		}
+		if (connected) Disconnect();
 		return true;
 	}
 
