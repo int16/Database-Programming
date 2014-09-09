@@ -13,15 +13,16 @@ public class Database {
 	private DataSet data;
 
 	private List<string> tables = new List<string>();
+	private List<RelationData> relations = new List<RelationData>();
 
-	private Dictionary<string, DataRelation> relations = new Dictionary<string, DataRelation>();
+	//private Dictionary<string, DataRelation> relations = new Dictionary<string, DataRelation>();
 	private Dictionary<string, List<string>> columns = new Dictionary<string, List<string>>();
 	private Dictionary<string, MySqlDataAdapter> adapters = new Dictionary<string, MySqlDataAdapter>();
 
 	public Database(string name, string host, string username, string password) {
 		string url = "SERVER=" + host + ";DATABASE=" + name + ";USER ID=" + username + ";PWD=" + password + ";allow zero datetime=true;";
 		connection = new MySqlConnection(url);
-		data = new DataSet();
+		Populate();
 	}
 
 	public bool Connect() {
@@ -34,7 +35,9 @@ public class Database {
 			}
 			return false;
 		} catch (MySqlException e) {
-			Console.WriteLine(e.Message);
+			#if VERBOSE
+				Console.WriteLine(e.Message);
+			#endif
 			return false;
 		}
 	}
@@ -49,7 +52,7 @@ public class Database {
 			}
 			return false;
 		} catch (MySqlException e) {
-			#if DEBUG
+			#if VERBOSE
 				Console.WriteLine(e.Message);
 			#endif
 			return false;
@@ -80,19 +83,32 @@ public class Database {
 	}
 
 	public void Populate() {
+		data = new DataSet();
 		bool connected = Connect();
-		tables = GetTableNames();
+		if (tables.Count == 0) tables = GetTableNames();
+		adapters.Clear();
 		for (int i = 0; i < tables.Count; i++) {
 			adapters.Add(tables[i], CreateAdapter("SELECT * FROM " + tables[i]));
 			try {
 				adapters[tables[i]].Fill(data, tables[i]);
 			} catch (FormatException e) {
-				Console.WriteLine(e.Message);
+				#if VERBOSE
+					Console.WriteLine(e.Message);
+				#endif
 				continue;
+			} catch (Exception e) {
+				#if VERBOSE
+					Console.WriteLine(e.Message);
+				#endif
 			}
 		}
-		foreach (string table in tables) {
-			columns.Add(table, GetColumnNames(table));
+		foreach (RelationData relation in relations) {
+			CreateRelation(relation.Name, relation.ParentTable, relation.ParentColumn, relation.ChildTable, relation.ChildColumn);
+		}
+		if (columns.Count == 0) {
+			foreach (string table in tables) {
+				columns.Add(table, GetColumnNames(table));
+			}
 		}
 		if (connected) Disconnect();
 	}
@@ -105,13 +121,24 @@ public class Database {
 		return new MySqlDataAdapter(sql, connection);
 	}
 
+	public DataRowCollection Rows(string table) {
+		DataTable t = data.Tables[table];
+		if (t == null) return null; // Invalid table name specified
+		return t.Rows;
+	}
+
 	public void CreateRelation(string name, string ptable, string pcol, string ctable, string ccol) {
 		DataTable parent = data.Tables[ptable];
 		if (parent == null) return; // Invalid table name specified
 		DataTable child = data.Tables[ctable];
 		if (child == null) return; // Invalid table name specified
-		DataRelation relation = data.Relations.Add(name, parent.Columns[pcol], child.Columns[ccol]);
-		relations.Add(name, relation);
+		DataRelation relation = new DataRelation(name, parent.Columns[pcol], child.Columns[ccol]);
+		data.Relations.Add(relation);
+		foreach (RelationData r in relations) {
+			if (r.Name == name) return;
+		}
+		RelationData rel = new RelationData(name, ptable, pcol, ctable, ccol);
+		relations.Add(rel);
 	}
 
 	public List<string> Find(string keywords, string table) {
@@ -131,7 +158,8 @@ public class Database {
 						foreach (DataColumn c in t.Columns) {
 							result += row[c].ToString() + " ";
 						}
-						results.Add(result.Trim());
+						result = result.Trim();
+						if (!results.Contains(result)) results.Add(result);
 						break;
 					}
 				}
@@ -267,12 +295,32 @@ public class Database {
 		try {
 			command.ExecuteNonQuery();
 		} catch (MySqlException e) {
-			#if DEBUG
+			#if VERBOSE
 				Console.WriteLine("Error! " + e.Message);
 			#endif
 			return false;
 		}
 		if (connected) Disconnect();
+		return true;
+	}
+
+	public bool InsertRow(Dictionary<string, object> row, string table) {
+		DataTable t = data.Tables[table];
+		if (t == null) return false; // Invalid table name specified
+		DataRow r = t.NewRow();
+		foreach (KeyValuePair<string, object> entry in row) {
+			r[entry.Key] = entry.Value;
+		}
+		adapters[table].InsertCommand = new MySqlCommandBuilder(adapters[table]).GetInsertCommand();
+		data.Tables[table].Rows.Add(r);
+		try {
+			adapters[table].Update(t);
+		} catch (Exception e) {
+			#if VERBOSE
+				Console.WriteLine(e.Message);
+			#endif
+		}
+		Populate();
 		return true;
 	}
 

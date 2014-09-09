@@ -1,13 +1,17 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="src/TestProgram.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="src/Database.cs">
     <Files>
-      <File FileName="src/TestProgram.cs" Line="2" Column="2" />
-      <File FileName="src/Database.cs" Line="1" Column="1" />
+      <File FileName="src/Database.cs" Line="10" Column="10" />
+      <File FileName="src/Spike2.cs" Line="15" Column="15" />
+      <File FileName="src/Spike2Data.cs" Line="1" Column="1" />
+      <File FileName="src/UIManager.cs" Line="65" Column="65" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/yanchernikov/Dropbox/Swinburne/2014/Semester 2/Database Programming/Spikes/Refresh/src/Database.cs" line="288" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>
