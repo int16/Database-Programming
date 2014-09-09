@@ -52,7 +52,8 @@ public class Spike2 {
 					if (!insert) ui.Show("Please enter either 'Competition' or 'Rule'.");
 					break;
 				case "update":
-
+					bool update = Update(ui.ReadString("Specify the table you wish to update: ").ToLower());
+					if (!update) ui.Show("Please enter either 'Competition' or 'Rule'.");
 					break;
 				case "delete":
 
@@ -121,6 +122,37 @@ public class Spike2 {
 		}
 		return true;
 	}
+
+	public bool Update(string table) {
+		if (table == "competition") {
+			string name = ui.ReadString("Enter the competition name to update: ");
+			Dictionary<string, object> row = new Dictionary<string, object>();
+			object id = null;
+			foreach (DataRow r in database.Rows("multieventcompetition")) {
+				if (r["comp_name"].ToString() == name) {
+					id = r["id"];
+					row["comp_name"] = ui.ReadString("Enter a new competition name: ");
+					break;
+				}
+			}
+			database.UpdateRow(id, row, "multieventcompetition");
+		} else if (table == "rule") {
+			int rid = ui.ReadInt("Enter the competition ID to update rule for: ");
+			Dictionary<string, object> row = new Dictionary<string, object>();
+			object[] id = new object[2];
+			foreach (DataRow r in database.Rows("multieventrule")) {
+				if (int.Parse(r["multieventcomp_id"].ToString()) == rid) {
+					id[0] = r["multieventcomp_id"];
+					id[1] = r["round_id"];
+					row["multieventcomp_id"] = ui.ReadString("Enter a new competition ID: ");
+					break;
+				}
+			}
+			database.UpdateRow(id, row, "multieventrule");
+		} else {
+			return false;
+		}
+		return true;	}
 
 	public static void Main(string[] args) {
 		new Spike2().run();

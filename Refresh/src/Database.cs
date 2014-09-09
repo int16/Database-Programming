@@ -191,15 +191,39 @@ public class Database {
 		return results;
 	}
 
-	public DataRow FindRowByKey(string key, string table) {
+	public DataRow FindRowByKey(object key, string table) {
 		DataTable t = data.Tables[table];
 		if (t == null) return null; // Invalid table name specified
 		bool connected = Connect();
 		foreach (DataRow row in t.Rows) {
 			foreach (DataColumn col in t.Columns) {
 				string value = row[col].ToString();
-				if (value.Equals(key)) {
-					Disconnect();
+				if (value.Equals(key.ToString())) {
+					if (connected) Disconnect();
+					return row;
+				}
+			}
+		}
+		if (connected) Disconnect();
+		return null;
+	}
+
+	public DataRow FindRowByKey(object[] keys, string table) {
+		DataTable t = data.Tables[table];
+		if (t == null) return null; // Invalid table name specified
+		bool connected = Connect();
+		foreach (DataRow row in t.Rows) {
+			int amount = keys.Length;
+			foreach (DataColumn col in t.Columns) {
+				foreach (object key in keys) {
+					string value = row[col].ToString();
+					if (value.Equals(key.ToString())) {
+						amount--;
+						break;
+					}
+				}
+				if (amount == 0) {
+					if (connected) Disconnect();
 					return row;
 				}
 			}
@@ -311,6 +335,7 @@ public class Database {
 		foreach (KeyValuePair<string, object> entry in row) {
 			r[entry.Key] = entry.Value;
 		}
+		// TODO: This can probably be removed
 		adapters[table].InsertCommand = new MySqlCommandBuilder(adapters[table]).GetInsertCommand();
 		data.Tables[table].Rows.Add(r);
 		try {
@@ -320,6 +345,23 @@ public class Database {
 				Console.WriteLine(e.Message);
 			#endif
 		}
+		Populate();
+		return true;
+	}
+
+	public bool UpdateRow(object key, Dictionary<string, object> row, string table) {
+		return UpdateRow(new object[] { key }, row, table);
+	}
+
+	public bool UpdateRow(object[] keys, Dictionary<string, object> row, string table) {
+		DataTable t = data.Tables[table];
+		if (t == null) return false; // Invalid table name specified
+		DataRow r = FindRowByKey(keys, table);
+		foreach (KeyValuePair<string, object> entry in row) {
+			r[entry.Key] = entry.Value;
+		}
+		adapters[table].UpdateCommand = new MySqlCommandBuilder(adapters[table]).GetUpdateCommand();
+		adapters[table].Update(t);
 		Populate();
 		return true;
 	}
