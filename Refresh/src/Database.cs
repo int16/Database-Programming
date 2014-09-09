@@ -366,6 +366,39 @@ public class Database {
 		return true;
 	}
 
+	public bool DeleteRow(object key, string table) {
+		return DeleteRow(new object[] { key }, table);
+	}
+
+	public bool DeleteRow(object[] keys, string table) {
+		DataTable t = data.Tables[table];
+		if (t == null) return false; // Invalid table name specified
+		DataRow r = FindRowByKey(keys, table);
+		if (r == null) {
+			Console.WriteLine("Error! The specified row doesn't exist!");
+			return false;
+		}
+		adapters[table].DeleteCommand = new MySqlCommandBuilder(adapters[table]).GetDeleteCommand();
+
+		// Check if row has a relation
+		foreach (RelationData rel in relations) {
+			if (table == rel.ParentTable) {
+				DataTable child = data.Tables[rel.ChildTable];
+				foreach (DataRow crow in child.Rows) {
+					if (r[rel.ParentColumn].ToString() == crow[rel.ChildColumn].ToString()) {
+						Console.WriteLine("Error! Row has a child row and can not be deleted!");
+						return false;
+					}
+				}
+			}
+		}
+
+		r.Delete();
+		adapters[table].Update(t);
+		Populate();
+		return true;
+	}
+
 	public List<string> Tables {
 		get { return tables; }
 	}

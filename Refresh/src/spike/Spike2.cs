@@ -48,7 +48,7 @@ public class Spike2 {
 					}
 					break;
 				case "insert":
-					bool insert = Insert(ui.ReadString("Enter the table to insert into: ").ToLower());
+					bool insert = Insert(ui.ReadString("Specify the table to insert into: ").ToLower());
 					if (!insert) ui.Show("Please enter either 'Competition' or 'Rule'.");
 					break;
 				case "update":
@@ -56,7 +56,8 @@ public class Spike2 {
 					if (!update) ui.Show("Please enter either 'Competition' or 'Rule'.");
 					break;
 				case "delete":
-
+					bool delete = Delete(ui.ReadString("Specify the table you wish to delete from: ").ToLower());
+					if (!delete) ui.Show("Please enter either 'Competition' or 'Rule'.");
 					break;
 				case "quit":
 					running = false;
@@ -152,7 +153,33 @@ public class Spike2 {
 		} else {
 			return false;
 		}
-		return true;	}
+		return true;
+	}
+
+	public bool Delete(string table) {
+		if (table == "competition") {
+			string name = ui.ReadString("Specify the name of the competition to delete: ");
+			object id = null;
+			foreach (DataRow r in database.Rows("multieventcompetition")) {
+				if (r["comp_name"].ToString() == name) {
+					id = r["id"];
+					break;
+				}
+			}
+			if (id == null) {
+				Console.WriteLine("That competition doesn't exist!");
+				Delete(table);
+			}
+			database.DeleteRow(id, "multieventcompetition");
+		} else if (table == "rule") {
+			int cid = ui.ReadInt("Enter the competition ID of the rule to delete: ");
+			int rid = ui.ReadInt("Enter the round ID of the rule to delete: "); 
+			database.DeleteRow(new object[] { cid, rid }, "multieventrule");
+		} else {
+			return false;
+		}
+		return true;
+	}
 
 	public static void Main(string[] args) {
 		new Spike2().run();
