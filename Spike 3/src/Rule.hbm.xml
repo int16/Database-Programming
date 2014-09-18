@@ -9,16 +9,18 @@
          This class contains multi-event rules. 
       </meta>
       
-      <composite-id>
+      <composite-id class="RuleID" name="ruleID">
       	<key-property name="compID" column="multieventcomp_id" type="int"/>
       	<key-property name="roundID" column="round_id" type="int"/>
       </composite-id>
       
-      <many-to-one name="comp" class="Competition" fetch="select">
-      	<column name="id" not-null="true" />
-      </many-to-one>
+      <property name="calcRules" column="calc_rules">
+     	<type name="org.hibernate.type.EnumType">
+     		<param name="enumClass">CalcRule</param>
+     		<param name="type">12</param>
+     	</type>
+      </property>
       
-      <property name="calcRules" column="calc_rules" type="string"/>
       <property name="eventsIncluded" column="events_included" type="int"/>
       
    </class>

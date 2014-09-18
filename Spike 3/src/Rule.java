@@ -2,35 +2,34 @@ import java.io.Serializable;
 
 public class Rule implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
-	private int compID, roundID;
-	private String calcRules;
+
+	private RuleID ruleID;
+	private CalcRule calcRules;
 	private int eventsIncluded;
 
 	public Rule() {
+		ruleID = new RuleID();
 	}
 
-	public int getCompID() {
-		return compID;
+	public Rule(int comp, int round, CalcRule crule, int events) {
+		this.ruleID = new RuleID(comp, round);
+		this.calcRules = crule;
+		this.eventsIncluded = events;
 	}
 
-	public void setCompID(int compID) {
-		this.compID = compID;
+	public RuleID getRuleID() {
+		return ruleID;
+	}
+	
+	public void setRuleID(RuleID id) {
+		this.ruleID = id;
 	}
 
-	public int getRoundID() {
-		return roundID;
-	}
-
-	public void setRoundID(int roundID) {
-		this.roundID = roundID;
-	}
-
-	public String getCalcRules() {
+	public CalcRule getCalcRules() {
 		return calcRules;
 	}
 
-	public void setCalcRules(String calcRules) {
+	public void setCalcRules(CalcRule calcRules) {
 		this.calcRules = calcRules;
 	}
 

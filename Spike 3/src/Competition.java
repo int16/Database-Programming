@@ -1,11 +1,14 @@
 import java.sql.Date;
+import java.util.Set;
+
 
 public class Competition {
 
 	private int id;
 	private String compName;
 	private String periodStart, periodEnd;
-
+	private Set<?> rules;
+	
 	public Competition() {
 	}
 
@@ -15,8 +18,6 @@ public class Competition {
 		Date date = new Date(now.getTime());
 		this.periodStart = date.toString();
 		this.periodEnd = date.toString();
-		
-		System.out.println(this.periodStart);
 	}
 
 	public int getId() {
@@ -49,6 +50,14 @@ public class Competition {
 
 	public void setPeriodEnd(String periodEnd) {
 		this.periodEnd = periodEnd;
+	}
+
+	public Set<?> getRules() {
+		return rules;
+	}
+
+	public void setRules(Set<?> rules) {
+		this.rules = rules;
 	}
 
 }

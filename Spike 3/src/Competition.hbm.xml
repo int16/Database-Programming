@@ -4,6 +4,7 @@
  "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"> 
 
 <hibernate-mapping>
+	
    <class name="Competition" table="multieventcompetition">
       <meta attribute="class-description">
          This class contains multi-event competitions. 
@@ -15,12 +16,10 @@
       <property name="periodStart" column="period_start" type="string"/>
       <property name="periodEnd" column="period_end" type="string"/>
       
-      <set name="rules" table="multieventrule" inverse="true" lazy="true" fetch="select">
-      	<key>
-      		<column name="multieventcomp_id" not-null="true" />
-      	</key>
-      	<one-to-many class="Rule" />
+      <set name="rules" cascade="all">
+      	<key column="multieventcomp_id" />
+		<one-to-many class="Rule" />
       </set>
-      
-   </class>
+	</class>
+   
 </hibernate-mapping>
