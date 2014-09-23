@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+ "-//Hibernate/Hibernate Mapping DTD//EN"
+ "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"> 
+
+<hibernate-mapping>
+	
+   <class name="Competition" table="multieventcompetition">
+      <meta attribute="class-description">
+         This class contains multi-event competitions. 
+      </meta>
+      <id name="id" type="int" column="id">
+         <generator class="native"/>
+      </id>
+      <property name="compName" column="comp_name" type="string"/>
+      <property name="periodStart" column="period_start" type="string"/>
+      <property name="periodEnd" column="period_end" type="string"/>
+      
+      <set name="rules" cascade="all">
+      	<key column="multieventcomp_id" />
+		<one-to-many class="Rule" />
+      </set>
+	</class>
+   
+</hibernate-mapping>

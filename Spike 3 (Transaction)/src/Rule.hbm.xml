@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+ "-//Hibernate/Hibernate Mapping DTD//EN"
+ "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"> 
+
+<hibernate-mapping>
+   <class name="Rule" table="multieventrule">
+      <meta attribute="class-description">
+         This class contains multi-event rules. 
+      </meta>
+      
+      <composite-id class="RuleID" name="ruleID">
+      	<key-property name="compID" column="multieventcomp_id" type="int"/>
+      	<key-property name="roundID" column="round_id" type="int"/>
+      </composite-id>
+      
+      <property name="calcRules" column="calc_rules">
+     	<type name="org.hibernate.type.EnumType">
+     		<param name="enumClass">CalcRule</param>
+     		<param name="type">12</param>
+     	</type>
+      </property>
+      
+      <property name="eventsIncluded" column="events_included" type="int"/>
+      
+   </class>
+</hibernate-mapping>
