@@ -1,9 +1,9 @@
 package database;
 
-public class TooManyEntriesException extends Exception
-{
-    public TooManyEntriesException(String msg)
-    {
-	super(msg);
-    }
+public class TooManyEntriesException extends Exception {
+	private static final long serialVersionUID = 1L;
+
+	public TooManyEntriesException(String msg) {
+		super(msg);
+	}
 }
