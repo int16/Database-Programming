@@ -8,6 +8,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.TransactionException;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.exception.ConstraintViolationException;
@@ -18,6 +19,8 @@ public class Spike3 {
 	private SessionFactory factory;
 
 	private static String menu = "Please specify one of the following options:\n" + "[list]   - Display foreign key mapping in DataSet\n" + "[insert] - Insert DataSet table\n" + "[update] - Update a row in the archer table\n" + "[delete] - Delete a row from the archer table\n" + "[quit]   - Terminate this program\n";
+	Session session;
+	Transaction t;
 
 	public Spike3() {
 		Logger.getLogger("org.hibernate").setLevel(Level.OFF);
@@ -34,6 +37,15 @@ public class Spike3 {
 	public void run() {
 		Scanner scanner = new Scanner(System.in);
 		boolean running = true;
+		session = factory.openSession();
+		t = session.beginTransaction();
+		insert();
+		try {
+			t.commit();
+		} catch (TransactionException e) {
+			System.err.println("Incorrect data specified!");
+			System.err.flush();
+		}
 		while (running) {
 			System.out.println(menu);
 			String input = scanner.nextLine().toLowerCase();
@@ -208,6 +220,12 @@ public class Spike3 {
 		scanner.close();
 		factory.close();
 	}
+	
+	public void insert() {
+		insertRuleName(26, 11, CalcRule.MAX, 1);
+		for (int i = 0; i < 3; i++) {
+		}
+	}
 
 	public void listRelations() {
 		Session session = factory.openSession();
@@ -240,6 +258,18 @@ public class Spike3 {
 		session.close();
 	}
 
+	public void insertCompetitionName(String name) {
+		Competition comp = new Competition(name);
+		session.save(comp);
+		try {
+			t.commit();
+		} catch (HibernateException e) {
+			t.rollback();
+			return;
+		}
+		session.close();
+	}
+
 	private boolean insertRule(int comp, int round, CalcRule calcrule, int events) {
 		Session session = factory.openSession();
 		Transaction t = session.beginTransaction();
@@ -255,6 +285,24 @@ public class Spike3 {
 			t.rollback();
 		}
 		session.close();
+		return true;
+	}
+
+	private boolean insertRuleName(int comp, int round, CalcRule calcrule, int events) {
+		if (t == null || !t.isActive()) t = session.beginTransaction();
+		if (t.wasRolledBack()) t = session.beginTransaction();
+		Rule rule = new Rule(comp, round, calcrule, events);
+		try {
+			session.save(rule);
+		} catch (ConstraintViolationException e) {
+			System.err.println("Rule already exists.");
+			System.err.flush();
+			t.rollback();
+			return false;
+		} catch (HibernateException e) {
+			t.rollback();
+			return false;
+		}
 		return true;
 	}
 

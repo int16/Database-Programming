@@ -22,8 +22,14 @@ public class EventData {
 		Connection conn = access.getConnection();
 		conn.setAutoCommit(false);
 		Statement stmt = conn.createStatement();
-		stmt.executeUpdate("INSERT INTO multieventcompetition" + " (comp_name, period_start, period_end) VALUES ('" + me.getName() + "', '" + (new java.sql.Date(me.getStart().getTime())) + "', '" + (new java.sql.Date(me.getEnd().getTime())) + "');");
-
+		try {
+			stmt.executeUpdate("INSERT INTO multieventcompetition" + " (comp_name, period_start, period_end) VALUES ('" + me.getName() + "', '" + (new java.sql.Date(me.getStart().getTime())) + "', '" + (new java.sql.Date(me.getEnd().getTime())) + "');");
+		} catch (SQLException ex) {
+			conn.rollback();
+			conn.close();
+			stmt.close();
+			return;
+		}
 		// This gets the foreign key for the next inserts
 		ResultSet rs = stmt.executeQuery("SELECT LAST_INSERT_ID() from multieventcompetition");
 		rs.next();
